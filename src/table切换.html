@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .active {
+            border: 5px solid pink;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="title"></div>
+        <div class="content"></div>
+    </div>
+    <script>
+        class Table {
+            constructor(obj) {
+                this.parentNode = this.getDom(obj.parent);
+                this.titelNode = this.getDom('.title', this.parentNode);
+                this.contNode = this.getDom('.content', this.parentNode);
+                this.data = obj.data;
+                this.init();
+            }
+            init() {
+                this.createNav();
+            }
+            createNav() {
+                Object.keys(this.data).forEach((item, index) => {
+                    let navbtn = this.createElement('button', {
+                        style: {
+                            width: '200px',
+                            height: '50px',
+                            background: 'orange'
+                        },
+                        class: 'button'
+                    }, item);
+                    this.titelNode.append(navbtn);
+                    navbtn.onclick = () => {
+                        let btns = Array.from(this.titelNode.children);
+                        btns.forEach(item => {
+                            item.classList.remove('active');
+                        })
+                        navbtn.classList.add('active');
+                        this.changeContent(navbtn.innerText);
+                    }
+                    if (index === 0) {
+                        navbtn.onclick();
+                    }
+                });
+            }
+            changeContent(key) {
+                this.contNode.innerHTML = this.data[key].map(text => `<p>${text.test}</p>`).join('');
+            }
+            createElement(tagName, props, text) {
+                let tag = document.createElement(tagName);
+                Object.entries(props).forEach(item => {
+                    if (typeof item[1] === 'object') {
+                        tag.setAttribute(item[0], Object.entries(item[1]).map(attr => `${attr[0]}:${attr[1]}`).join(';'));
+                    } else {
+                        tag.setAttribute(item[0], item[1]);
+                    }
+
+                });
+                console.log(tag);
+                tag.innerText = text;
+                return tag;
+            }
+            getDom(target, parent = document) {
+                return typeof target === 'string' ? parent.querySelector(target) : target
+            }
+        }
+        let tableobj = new Table({
+            parent: '.wrap',
+            data: {
+                "头条": [{
+                    test: '今日头条1'
+                }, {
+                    test: '今日头条1'
+                }],
+                "热文": [{
+                    test: '腾讯新闻2'
+                }, {
+                    test: '腾讯新闻2'
+                }],
+                "军事": [{
+                    test: '中国海军3'
+                }, {
+                    test: '腾讯新闻3'
+                }]
+            }
+        });
+    </script>
+</body>
+
+</html>
